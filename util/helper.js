@@ -8,7 +8,7 @@ const sendMessage = async (message, senderId) => {
     try {
         const twilio = require('twilio');
         const keys = require('../config/keys').twilio;
-        const client = new twilio(keys.accountSid, keys.authToken);
+        const client = twilio(keys.accountSid, keys.authToken);
         const sent = await client.messages.create({
             body: message,
             to: senderId,

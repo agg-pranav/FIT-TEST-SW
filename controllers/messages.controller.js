@@ -1,4 +1,4 @@
-const {msgObj, sendResponse} = require('../util/helper');
+const {msgObj, sendMessage} = require('../util/helper');
 const Message = require('../models/message');
 const Contact = require('../models/contact');
 const Sequelize = require('sequelize');
@@ -7,18 +7,26 @@ const postMessage = async (req, res) => {
     let senderId = req.body.From;
     let message = req.body.Body;
     let response = msgObj[message] ? msgObj[message] : 'Sorry, I don\'t understand';
-    sendResponse(response, senderId);
+    try {
+        sendMessage(response, senderId);
+    } catch(err) {
+        response = err.message;
+    }
 
     let contact = await Contact.findOne({
         where: {contactNumber: senderId}
     })
-
+    console.log(message, response, contact);
     if(!contact) {
-        Contact.create({
-            contactNumber: senderId
-            }).createMessage({
+        const {id} = await Contact.create({
+            contactNumber: senderId,
+            requests: 1
+            });
+        await Message.create({
                 recievedMessage: message,
-                sentMessage: response
+                sentMessage: response,
+                contactId: id
+
             })
     } else {
         Message.create({
@@ -31,10 +39,11 @@ const postMessage = async (req, res) => {
             { where: { contactNumber: senderId}}
         )
     }
+    res.status(200).send(response);
 
 }
 // return contactNumber with maximum number of requests in contact table
-const getMaxRequests = async () => {
+const getMaxRequests = async (req,res) => {
     let maxRequests = await Contact.findOne({
         attributes: ['contactNumber'],
         order: [['requests', 'DESC']],
