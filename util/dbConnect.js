@@ -1,5 +1,5 @@
 const Sequlize = require('sequelize');
-const keys =  require('../config/keys').db;
+const keys = require('../config/keys').db;
 
 console.log(keys)
 const sequelize = new Sequlize(
