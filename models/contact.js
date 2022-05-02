@@ -10,7 +10,11 @@ const Contact  = sequelize.define('contact', {
     contactNumber: {
         type: Sequlize.STRING,
         allowNull: false
-        }
+        },
+    requests: {
+        type: Sequlize.INTEGER,
+        allowNull : false
+    }
 });
 
 module.exports = Contact;

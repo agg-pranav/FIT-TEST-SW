@@ -1,7 +1,7 @@
 const Sequlize = require('sequelize');
 const sequelize = require('../util/dbConnect');
 
-const Model = sequelize.define('message', {
+const Message = sequelize.define('message', {
     id: {
         type: Sequlize.INTEGER,
         primaryKey: true,
@@ -17,4 +17,4 @@ const Model = sequelize.define('message', {
     }
 });
 
-module.exports = Model;
+module.exports = Message;
