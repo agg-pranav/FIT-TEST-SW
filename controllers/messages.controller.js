@@ -10,45 +10,72 @@ const postMessage = async (req, res) => {
     try {
         sendMessage(response, senderId);
     } catch(err) {
+        console.log(err.message)
         response = err.message;
     }
 
     let contact = await Contact.findOne({
         where: {contactNumber: senderId}
     })
+    let id = contact.id;
     console.log(message, response, contact);
-    if(!contact) {
-        const {id} = await Contact.create({
-            contactNumber: senderId,
-            requests: 1
+    if(!contact) { 
+        let newContact = await Contact.create({
+            contactNumber: senderId
             });
-        await Message.create({
-                recievedMessage: message,
-                sentMessage: response,
-                contactId: id
-
-            })
-    } else {
-        Message.create({
-            recievedMessage: message,
-            sentMessage: response,
-            contactId: contact.id
-        })
-        Contact.update(
-            {requests: Sequelize.literal('requests + 1')}, 
-            { where: { contactNumber: senderId}}
-        )
+        id = newContact.id;
     }
+    await Message.create({
+        body: message,
+        type: 'recieved',
+        contactId: id
+    })
+    await Message.create({
+        body: response,
+        type: 'sent',
+        contactId: id
+    })
     res.status(200).send(response);
 
 }
-// return contactNumber with maximum number of requests in contact table
-const getMaxRequests = async (req,res) => {
-    let maxRequests = await Contact.findOne({
-        attributes: ['contactNumber'],
-        order: [['requests', 'DESC']],
-        limit: 1
+// return contactNumber with maximum number of requests today
+const getMaxRequestsToday = async (req,res) => {
+    let today = new Date();
+    let todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    let todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    let maxRequests = await Message.findOne({
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.col('contactId')), 'count'],
+            [Sequelize.fn('MAX', Sequelize.col('contactId')), 'maxId']
+        ],
+        where: {
+            createdAt: {
+                [Sequelize.Op.between]: [todayStart, todayEnd]
+            }
+        },
+        group: 'contactId',
+        order: [[Sequelize.col('count'), 'DESC']]
     })
-     res.send(maxRequests.contactNumber);
+    console.log(maxRequests);
+    Contact.findOne({
+        where: {
+            id: maxRequests.maxId
+            }
+        })
+        .then(contact => {
+            res.status(200).send(contact.contactNumber);
+        })
+        .catch(err => {
+            res.status(500).send(err);
+        })
 }
+
+// const getMaxRequests = async (req,res) => {
+//     let maxRequests = await Contact.findOne({
+//         attributes: ['contactNumber'],
+//         order: [['requests', 'DESC']],
+//         limit: 1
+//     })
+//      res.send(maxRequests.contactNumber);
+// }
 module.exports = {getMaxRequests,postMessage};
