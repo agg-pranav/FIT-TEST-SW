@@ -8,12 +8,17 @@ const Contact  = sequelize.define('contact', {
         autoIncrement: true
         },
     contactNumber: {
+<<<<<<< Updated upstream
         type: Sequlize.STRING,
         allowNull: false
         },
     requests: {
         type: Sequlize.INTEGER,
         allowNull : false
+=======
+        type: Sequelize.STRING,
+        allowNull: false,
+>>>>>>> Stashed changes
     }
 });
 

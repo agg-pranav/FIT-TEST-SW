@@ -7,12 +7,21 @@ const Message = sequelize.define('message', {
         primaryKey: true,
         autoIncrement: true
     },
+<<<<<<< Updated upstream
     recievedMessage: {
         type: Sequlize.STRING,
         allowNull: false,
     },
     sentMessage: {
         type: Sequlize.STRING,
+=======
+    body: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    type: {
+        type: Sequelize.STRING,
+>>>>>>> Stashed changes
         allowNull: false,
     }
 });
