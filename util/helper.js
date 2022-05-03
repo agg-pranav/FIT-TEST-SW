@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const msgObj =  {
     '1' : 'response 1',
     '2' : 'response 2',
@@ -7,12 +10,11 @@ const msgObj =  {
 const sendMessage = async (message, senderId) => {
     try {
         const twilio = require('twilio');
-        const keys = require('../config/keys').twilio;
-        const client = twilio(keys.accountSid, keys.authToken);
+        const client = twilio(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
         const sent = await client.messages.create({
             body: message,
             to: senderId,
-            from: keys.from
+            from: process.env.FROM
         });
         console.log(sent.sid);
     } catch(err) {

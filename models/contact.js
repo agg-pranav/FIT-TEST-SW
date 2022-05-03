@@ -1,18 +1,18 @@
-const Sequlize = require('sequelize');
+const Sequelize = require('sequelize');
 const sequelize = require('../util/dbConnect');
 
 const Contact  = sequelize.define('contact', {
     id: {
-        type: Sequlize.INTEGER,
+        type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
         },
     contactNumber: {
-        type: Sequlize.STRING,
+        type: Sequelize.STRING,
         allowNull: false
         },
     requests: {
-        type: Sequlize.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull : false
     }
 });

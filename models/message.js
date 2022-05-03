@@ -1,18 +1,18 @@
-const Sequlize = require('sequelize');
+const Sequelize = require('sequelize');
 const sequelize = require('../util/dbConnect');
 
 const Message = sequelize.define('message', {
     id: {
-        type: Sequlize.INTEGER,
+        type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
     recievedMessage: {
-        type: Sequlize.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
     },
     sentMessage: {
-        type: Sequlize.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
     }
 });
