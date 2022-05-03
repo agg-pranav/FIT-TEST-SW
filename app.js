@@ -13,7 +13,7 @@ Contact.hasMany(Message, {
 Message.belongsTo(Contact, {
     foreignKey: 'contactId',
 });
-sequelize.sync()
+sequelize.sync({force:true})
     .then(() => {
         console.log('Database & tables created!');
     })
