@@ -1,8 +1,7 @@
 const router = require('express').Router();
-const {getMaxRequests, postMessage } = require('../controllers/messages.controller');
+const {getMaxRequestsToday, postMessage } = require('../controllers/messages.controller');
 
-router.route('/')
-    .post(postMessage )
-    .get(getMaxRequests);
+router.route('/').post(postMessage )
+router.route('/max').get(getMaxRequestsToday);
 
 module.exports = router;

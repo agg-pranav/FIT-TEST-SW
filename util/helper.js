@@ -16,7 +16,7 @@ const sendMessage = async (message, senderId) => {
             to: senderId,
             from: process.env.FROM
         });
-        console.log(sent.sid);
+        console.log(sent.to, sent.body, sent.sid);
     } catch(err) {
         console.log(err);
     }

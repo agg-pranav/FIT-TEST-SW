@@ -7,6 +7,7 @@ const postMessage = async (req, res) => {
     let senderId = req.body.From;
     let message = req.body.Body;
     let response = msgObj[message] ? msgObj[message] : 'Sorry, I don\'t understand';
+    console.log(senderId, message);
     try {
         sendMessage(response, senderId);
     } catch(err) {
@@ -17,14 +18,14 @@ const postMessage = async (req, res) => {
     let contact = await Contact.findOne({
         where: {contactNumber: senderId}
     })
-    let id = contact.id;
+    let id = undefined;
     console.log(message, response, contact);
     if(!contact) { 
         let newContact = await Contact.create({
             contactNumber: senderId
             });
         id = newContact.id;
-    }
+    } else {id = contact.id}
     await Message.create({
         body: message,
         type: 'recieved',
@@ -43,10 +44,12 @@ const getMaxRequestsToday = async (req,res) => {
     let today = new Date();
     let todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     let todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-    let maxRequests = await Message.findOne({
+    let maxRequests = await Message.findAll({
+        include: Contact,
         attributes: [
-            [Sequelize.fn('COUNT', Sequelize.col('contactId')), 'count'],
-            [Sequelize.fn('MAX', Sequelize.col('contactId')), 'maxId']
+            'contactId',
+            [Sequelize.fn('COUNT', Sequelize.col('contactId')), 'count']
+            // [Sequelize.fn('MAX', Sequelize.col('contactId')), 'maxId']
         ],
         where: {
             createdAt: {
@@ -56,10 +59,10 @@ const getMaxRequestsToday = async (req,res) => {
         group: 'contactId',
         order: [[Sequelize.col('count'), 'DESC']]
     })
-    console.log(maxRequests);
+    
     Contact.findOne({
         where: {
-            id: maxRequests.maxId
+            id: maxRequests[0].contactId
             }
         })
         .then(contact => {
@@ -78,4 +81,4 @@ const getMaxRequestsToday = async (req,res) => {
 //     })
 //      res.send(maxRequests.contactNumber);
 // }
-module.exports = {getMaxRequests,postMessage};
+module.exports = {getMaxRequestsToday,postMessage};

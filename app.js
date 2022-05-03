@@ -1,6 +1,5 @@
 const express = require('express');
 const morgan = require('morgan');
-const Sequelize = require('sequelize');
 const sequelize = require('./util/dbConnect');
 const Contact = require('./models/contact')
 const Message = require('./models/message')
@@ -13,7 +12,7 @@ Contact.hasMany(Message, {
 Message.belongsTo(Contact, {
     foreignKey: 'contactId',
 });
-sequelize.sync({force:true})
+sequelize.sync()
     .then(() => {
         console.log('Database & tables created!');
     })
