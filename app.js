@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-const Sequlize = require('sequelize');
+const Sequelize = require('sequelize');
 const sequelize = require('./util/dbConnect');
 const Contact = require('./models/contact')
 const Message = require('./models/message')
